@@ -1,0 +1,27 @@
+{
+  "name": "api-teste",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "test": "npm run test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Coigo/APItest.git"
+  },
+  "author": "MrCoigo",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Coigo/APItest/issues"
+  },
+  "homepage": "https://github.com/Coigo/APItest#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "mock": "^0.1.1",
+    "node": "^20.5.0",
+    "nodemon": "^3.0.1"
+  }
+}
