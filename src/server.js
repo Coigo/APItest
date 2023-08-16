@@ -1,6 +1,6 @@
 
-import {SaveNewUser, CheckIfUsernameExist} from '../Database/interaction.js'
-import { CreateUser } from './create-user.js'
+const {SaveNewUser, CheckIfUsernameExist} = require( '../Database/interaction.js')
+const { CreateUser } = require( './create-user.js')
 
 const express = require('express')
 const cors  = require('cors')
@@ -16,29 +16,28 @@ app.use(cors({
 
 
         app.post('/login', async (req, res) => {
-            UserInfo = req.body
+            console.log('Requisição Recebida')
             
-            CreateUser(UserInfo, {
-                CheckIfUsernameExist,
-                SaveNewUser
-            })
+            const UserInfo = {
+                username:'aaaa',
+                password:'bbbb',
+                id: 1
+            }
+            async function CreateUser_Init() {
+                 console.log('os dados estao sendo eviados')
+               
+                        // const resultado = await CreateUser(UserInfo, {
+                        //     CheckIfUsernameExist,
+                        //     SaveNewUser
+                        // })
+                            
+                        
+                        //     assert.equal(resultado, true)
+                    
+                
             
-                
-                
-                // .then((handler) => {
-                //     DbInteraction.SaveNewUser(newUserInfo)
-                //     .then(() => {
-                //     return res.
-                //             writeHead(200)
-                //             .end()
-                //     })
-                //     .catch((err) => {
-                //     console.log(err)
-                //     })
-                // })
-                // .catch((err) => {
-                // socket.emit('usuarioInvalido', 'erro')
-                // })
+            }
+            
         })
 
 app
