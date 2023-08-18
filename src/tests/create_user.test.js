@@ -9,17 +9,18 @@ const { fake1, fake2 } = require( '../../Database/interaction.js')
 
 test("create new user", async () => {
     const UserInfo = {
-        username:'aaaa',
+        username:'qw2rq11qr',
         password:'bbbb',
-        id: 1
+        id: 112631331
     }
 
             const WasCreated = await CreateUser(UserInfo, {
                 CheckIfUsernameExist, SaveNewUser
             })
+            console.log(`o resltado de WasCreated é ${WasCreated}`)
 
         
-        assert.equal(WasCreated, true)
+        assert.equal(WasCreated, 'ok')
         
     
 

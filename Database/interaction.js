@@ -1,10 +1,11 @@
-const { createPool } = require('mysql')
+const { createConnection } = require('mysql')
 require('dotenv').config()
 
 
 
-const pool = createPool({
+const conn = createConnection({
   host:process.env.HOST,
+  port:process.env.PORT,
   user:process.env.USER,
   password:process.env.PASSWORD,
   database:process.env.DATABASE,
@@ -12,20 +13,38 @@ const pool = createPool({
 })
 
 function CheckIfUsernameExist(UserInfo) {
-  console.log('iniciando checagem')
-    return new Promise((naoExiste, existe) => {
-      const { username } = UserInfo
-      pool.query("Select Username from usuarios where Username = ?", [username], (err, user) => {
-        
-        if ( user === undefined) { console.log('usuario inexistente'); naoExiste(user) }
-        else if (err) {
-            console.log(err)
-        }
-        else { existe(user) }
+  console.log('iniciando checagem');
 
-      })
-    })
-  }
+  const { username } = UserInfo;
+
+  return new Promise((resolve, reject) => {
+    conn.query("SELECT Username FROM usuarios WHERE Username = ?", [username], (err, user) => {
+      
+      if (user.length === 0) {
+        console.log('usuario nao existe');
+        resolve('ok');
+      } else {
+        console.log('existe');
+        reject(new Error('Username already exists.'));
+      }
+
+    });
+  });
+}
+
+// Assuming you have properly configured 'conn' before this point
+CheckIfUsernameExist({
+  username: 'aaaa',
+  password: 'bbb'
+})
+  .then(() => {
+    console.log('usuario nao existeaaaaa');
+  })
+  .catch((error) => {
+    console.error(error.message); // Log the error message
+  });
+
+
 
 
 function SaveNewUser(newUser) {
@@ -33,33 +52,27 @@ function SaveNewUser(newUser) {
   return new Promise((resolve, reject) => {
     const { username, password, id } = newUser;
 
-    function InsertNewUser() {
-      pool.query('INSERT INTO usuarios (Username, Password, id) VALUES (?, ?, ?)', [username, password, id], function(err) {
+      conn.query('INSERT INTO usuarios (Username, Password, id) VALUES (?, ?, ?)', [username, password, id], function(err) {
+      conn.end(() => {
+        
         if (err) {
           console.error(err);
           reject(err);
           return;
         }
-        console.log('> Inserção realizada com sucesso.');
-
-        resolve(true); // Resolve the Promise when the user is successfully inserted.
+        console.log('> Inserção realizada com sucesso')
+        resolve('ok'); // Resolve the Promise when the user is successfully inserted.
+      })
       });
-    }
-
-    InsertNewUser();
-  });
+    })
 }
 
-async function fake1() {
-  const result = await SaveNewUser({
-    username:'aaaa',
-    password:'bbb',
-    id:342
-  })
-  console.log(result)
-}
 
-fake1()
+
+
+
+
+
  function fake2(a) {
   console.log(a)
 }
@@ -67,5 +80,5 @@ fake1()
 module.exports = {
   CheckIfUsernameExist,
   SaveNewUser,
-  fake1, fake2,
+fake2,
 }
