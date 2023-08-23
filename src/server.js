@@ -1,13 +1,16 @@
 
-const {SaveNewUser, CheckIfUsernameExist} = require( '../Database/interaction.js')
+const {SaveNewUser, CheckIfUsernameExist, LoginUser} = require( '../Database/interaction.js')
 const { CreateUser } = require( './create-user.js')
+const { Init_loginUser } = require( './login-user.js')
 
 const express = require('express')
 const cors  = require('cors')
 const app = express()
+const jwt = require('jsonwebtoken')
 
-const db = require('../Database/interaction.js')
 
+
+app.use(express.json())
 app.use(cors({
     origin: ['http://localhost:4001', 'http://localhost:4002']
      
@@ -15,30 +18,39 @@ app.use(cors({
 
 
 
-        app.post('/login', async (req, res) => {
+        app.post('/signup', async (req, res) => {
             console.log('Requisição Recebida')
             
-            const UserInfo = {
-                username:'aaaa',
-                password:'bbbb',
-                id: 1
+            const UserInfo = req.body
+            const WasCreated = await CreateUser(UserInfo, {
+                CheckIfUsernameExist, SaveNewUser
+            })
+
+            if ( WasCreated === true ) {
+                res.status(200).end()
             }
-            async function CreateUser_Init() {
-                 console.log('os dados estao sendo eviados')
-               
-                        // const resultado = await CreateUser(UserInfo, {
-                        //     CheckIfUsernameExist,
-                        //     SaveNewUser
-                        // })
-                            
-                        
-                        //     assert.equal(resultado, true)
-                    
-                
-            
+            else {
+                res.status(400).end()
             }
-            
         })
+
+
+        app.post('/login', async (req, res) => {
+            const Userinfo = req.body
+            const Login = await Init_loginUser(Userinfo, {
+                LoginUser
+            })
+            if ( Login === 'err' ) {
+                res.status(400).end()
+            }
+            else if ( Login === [] ) {
+                
+            }
+            else {
+                res.status(200).send(Login)
+            }
+        })
+        
 
 app
     .listen(4002)

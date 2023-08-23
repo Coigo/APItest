@@ -18,31 +18,26 @@ function CheckIfUsernameExist(UserInfo) {
   const { username } = UserInfo;
 
   return new Promise((resolve, reject) => {
-    conn.query("SELECT Username FROM usuarios WHERE Username = ?", [username], (err, user) => {
+    conn.query("SELECT username FROM users WHERE username = ?", [username], (err, user) => {
       
       if (user.length === 0) {
         console.log('usuario nao existe');
-        resolve('ok');
-      } else {
+        resolve(true);
+      }
+      else if (err) {
+        reject(err)
+      }
+      else {
         console.log('existe');
-        reject(new Error('Username already exists.'));
+        reject();
       }
 
     });
   });
 }
 
-// Assuming you have properly configured 'conn' before this point
-CheckIfUsernameExist({
-  username: 'aaaa',
-  password: 'bbb'
-})
-  .then(() => {
-    console.log('usuario nao existeaaaaa');
-  })
-  .catch((error) => {
-    console.error(error.message); // Log the error message
-  });
+
+
 
 
 
@@ -50,10 +45,10 @@ CheckIfUsernameExist({
 function SaveNewUser(newUser) {
   console.log('salvando')
   return new Promise((resolve, reject) => {
-    const { username, password, id } = newUser;
+    const { username, password} = newUser;
 
-      conn.query('INSERT INTO usuarios (Username, Password, id) VALUES (?, ?, ?)', [username, password, id], function(err) {
-      conn.end(() => {
+      conn.query('INSERT INTO users (username, password) VALUES (?, ?)', [username, password], function(err) {
+
         
         if (err) {
           console.error(err);
@@ -61,11 +56,27 @@ function SaveNewUser(newUser) {
           return;
         }
         console.log('> Inserção realizada com sucesso')
-        resolve('ok'); // Resolve the Promise when the user is successfully inserted.
+        resolve(true); 
       })
-      });
+      
     })
 }
+
+function LoginUser(user) {
+  
+  return new Promise((resolve, reject) => {
+    const { username, password } = user
+      conn.query('SELECT username FROM users WHERE username = ? AND password = ?', [username, password], function(err, rows) {
+        if (err) {
+          reject(err)
+        } else {
+          console.log(rows)
+          resolve(rows)
+        }
+        
+      })
+    })
+  }
 
 
 
@@ -80,5 +91,6 @@ function SaveNewUser(newUser) {
 module.exports = {
   CheckIfUsernameExist,
   SaveNewUser,
+  LoginUser,
 fake2,
 }
