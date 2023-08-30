@@ -1,18 +1,23 @@
 
 const {SaveNewUser, CheckIfUsernameExist, LoginUser} = require( '../Database/interaction.js')
-const { CreateUser } = require( './create-user.js')
 const { Init_loginUser } = require( './login-user.js')
+const { CreateUser } = require( './create-user.js')
+const cookieParser = require('cookie-parser')
+const jwt = require('jsonwebtoken') 
+require('dotenv').config()
 
 const express = require('express')
 const cors  = require('cors')
+
 const app = express()
-const jwt = require('jsonwebtoken')
 
 
 
 app.use(express.json())
+app.use(cookieParser())
 app.use(cors({
-    origin: ['http://localhost:4001', 'http://localhost:4002']
+    origin: ['http://localhost:4001', 'http://localhost:4002'],
+    credentials: true
      
 }))
 
@@ -22,16 +27,17 @@ app.use(cors({
             console.log('Requisição Recebida')
             
             const UserInfo = req.body
-            const WasCreated = await CreateUser(UserInfo, {
-                CheckIfUsernameExist, SaveNewUser
-            })
+            console.log(UserInfo)
+             const WasCreated = await CreateUser(UserInfo, {
+                 CheckIfUsernameExist, SaveNewUser
+             })
 
-            if ( WasCreated === true ) {
-                res.status(200).end()
-            }
-            else {
-                res.status(400).end()
-            }
+             if ( WasCreated === true ) {
+                 res.status(200).end()
+             }
+             else {
+                 res.status(400).end()
+             }
         })
 
 
@@ -41,16 +47,24 @@ app.use(cors({
                 LoginUser
             })
             if ( Login === 'err' ) {
-                res.status(400).end()
+                res.status(501).end()
             }
-            else if ( Login === [] ) {
-                
+            else if ( Login[0] === undefined ) {
+                res.status(401).end()
             }
             else {
-                res.status(200).send(Login)
+                const { id, username } = Login[0]
+
+                const token = jwt.sign({ id, username }, process.env.SECRET,  { expiresIn: 60 })
+                console.log(( 'token', 'token, { httpOnly: true }' ))
+                res.cookie( 'token', token, { httpOnly: true, secure:true } )
+                res.status(200).send({ "status" :"ok" })
+
             }
         })
         
+        
+
 
 app
     .listen(4002)

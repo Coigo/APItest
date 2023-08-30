@@ -30,6 +30,7 @@ function CheckIfUsernameExist(UserInfo) {
       else {
         console.log('existe');
         reject();
+        
       }
 
     });
@@ -66,7 +67,7 @@ function LoginUser(user) {
   
   return new Promise((resolve, reject) => {
     const { username, password } = user
-      conn.query('SELECT username FROM users WHERE username = ? AND password = ?', [username, password], function(err, rows) {
+      conn.query('SELECT id, username FROM users WHERE username = ? AND password = ?', [username, password], function(err, rows) {
         if (err) {
           reject(err)
         } else {

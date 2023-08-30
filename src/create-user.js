@@ -6,11 +6,10 @@ function CreateUser(UserInfo, DataBasefunction) {
         const { CheckIfUsernameExist, SaveNewUser } = DataBasefunction
             CheckIfUsernameExist(UserInfo)
             .then(()=> { SaveNewUser(UserInfo)
-                .then(() => { resolve(true) })
-                .catch(() => { resolve(false) })
-            }) .catch(() => { resolve(false) })
+                .then(() =>  resolve(true) )
+                .catch(() =>  resolve(false) )
+            }) .catch(() =>  resolve(false) )
     })
-
 
 }
 
