@@ -1,7 +1,7 @@
 
 const {SaveNewUser, CheckIfUsernameExist, LoginUser} = require( '../Database/interaction.js')
 const { Init_loginUser } = require( './login-user.js')
-const { CreateUser } = require( './create-user.js')
+const { CreateUser, CheckUsername } = require( './create-user.js')
 const cookieParser = require('cookie-parser')
 const jwt = require('jsonwebtoken') 
 require('dotenv').config()
@@ -21,46 +21,69 @@ app.use(cors({
      
 }))
 
-
+        app.post('/check', async(req, res) => {
+            const { username } = req.body
+            console.log(username)
+              try {
+                const result = await CheckUsername(username, { CheckIfUsernameExist })
+                console.log(result)
+                res.status(result.code).end()
+            }
+            catch ( err ) {
+                console.log(err)
+                res.status(err.code).end()
+            }
+        })
 
         app.post('/signup', async (req, res) => {
             console.log('Requisição Recebida')
             
             const UserInfo = req.body
             console.log(UserInfo)
-             const WasCreated = await CreateUser(UserInfo, {
-                 CheckIfUsernameExist, SaveNewUser
-             })
+            try {
+                const result = await CreateUser(UserInfo, { SaveNewUser })
+                if ( result.Created === true ) {
+                        console.log('2: ta certo')
+                        res.status(200).end()
+                    }
+                else if ( result.Created === false ) {
+                        console.log('2: ta errado')
+                        res.status(409).end()
+                    }
+                
+            }
+            catch ( err ) {
+                console.log('erro')
+                res.status( 500 ).end()
+            }
 
-             if ( WasCreated === true ) {
-                 res.status(200).end()
-             }
-             else {
-                 res.status(400).end()
-             }
         })
 
 
         app.post('/login', async (req, res) => {
             const Userinfo = req.body
-            const Login = await Init_loginUser(Userinfo, {
-                LoginUser
-            })
-            if ( Login === 'err' ) {
-                res.status(501).end()
+            console.log('Requisição recebida ', Userinfo)
+            try {
+                const result = await Init_loginUser(Userinfo, { LoginUser })
+                if (result.code === 200) {
+                    console.log('O resultado da query é: ',result)
+                    const { id, username } = result[0]
+                    console.log( 'As Credenciais do token são: ', id, username)
+                    const token = jwt.sign({ id, username }, process.env.SECRET,  { expiresIn: 10000 })
+                    console.log('Token Criado:', token)
+                    res.send( token )
+                    res.status(200)
+                }
+                else {
+                    console.log('Usuario não autenticado')
+                    res.status(401).end()
+                }
+            } 
+            catch ( err ) {
+                res.status(500).end()
+                console.log(err)
             }
-            else if ( Login[0] === undefined ) {
-                res.status(401).end()
-            }
-            else {
-                const { id, username } = Login[0]
-
-                const token = jwt.sign({ id, username }, process.env.SECRET,  { expiresIn: 60 })
-                console.log(( 'token', 'token, { httpOnly: true }' ))
-                res.cookie( 'token', token, { httpOnly: true, secure:true } )
-                res.status(200).send({ "status" :"ok" })
-
-            }
+           
         })
         
         

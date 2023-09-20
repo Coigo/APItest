@@ -1,16 +1,17 @@
 
 
-function Init_loginUser(UserInfo, LoginFunction) {
-    return new Promise((resolve, reject) => {
-        const { LoginUser } = LoginFunction
-
-        LoginUser(UserInfo)
-        .then((user) =>  resolve(user) )
-        .catch((err) =>  { 
-            console.log(err); 
-            reject('err')
-        })
-    })
+async function Init_loginUser(UserInfo, LoginFunction) {
+    const { LoginUser } = LoginFunction
+    
+    try {
+        const result = await LoginUser(UserInfo)
+        console.log(result)
+        return result
+    }
+    catch ( err ) {
+        console.log(err)
+        throw err
+    }
 }
 
 module.exports = {
