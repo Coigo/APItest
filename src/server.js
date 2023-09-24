@@ -22,11 +22,9 @@ app.use(cors({
 }))
 
         app.post('/check', async(req, res) => {
-            const { username } = req.body
-            console.log(username)
+            const { username } = req.body            
               try {
-                const result = await CheckUsername(username, { CheckIfUsernameExist })
-                console.log(result)
+                const result = await CheckUsername(username, { CheckIfUsernameExist })                
                 res.status(result.code).end()
             }
             catch ( err ) {
@@ -43,11 +41,9 @@ app.use(cors({
             try {
                 const result = await CreateUser(UserInfo, { SaveNewUser })
                 if ( result.Created === true ) {
-                        console.log('2: ta certo')
                         res.status(200).end()
                     }
                 else if ( result.Created === false ) {
-                        console.log('2: ta errado')
                         res.status(409).end()
                     }
                 
@@ -65,12 +61,9 @@ app.use(cors({
             console.log('Requisição recebida ', Userinfo)
             try {
                 const result = await Init_loginUser(Userinfo, { LoginUser })
-                if (result.code === 200) {
-                    console.log('O resultado da query é: ',result)
-                    const { id, username } = result[0]
-                    console.log( 'As Credenciais do token são: ', id, username)
-                    const token = jwt.sign({ id, username }, process.env.SECRET,  { expiresIn: 10000 })
-                    console.log('Token Criado:', token)
+                if (result.code === 200) {                    
+                    const { id, username } = result[0]                  
+                    const token = jwt.sign({ id, username }, process.env.SECRET,  { expiresIn: 10000 })                    
                     res.send( token )
                     res.status(200)
                 }
