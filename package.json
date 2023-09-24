@@ -2,6 +2,7 @@
   "name": "api-teste",
   "version": "1.0.0",
   "description": "",
+  "type": "module",
   "main": "server.js",
   "scripts": {
     "start": "node src/server.js",
@@ -19,6 +20,7 @@
   },
   "homepage": "https://github.com/Coigo/APItest#readme",
   "dependencies": {
+    "@prisma/client": "^5.3.1",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
@@ -32,6 +34,10 @@
     "sqlite3": "^5.1.6"
   },
   "devDependencies": {
-    "prisma": "^5.3.1"
+    "@types/express": "^4.17.18",
+    "@types/node": "^20.6.5",
+    "prisma": "^5.3.1",
+    "tsx": "^3.13.0",
+    "typescript": "^5.2.2"
   }
 }
