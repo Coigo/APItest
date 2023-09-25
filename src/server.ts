@@ -16,11 +16,15 @@ function qualquer(userInfo: LoginRequest): number {
 }
 console.log(typeof qualquer)
 
+interface Login {
+    
+}
 
 app.post('/login', async (req: Request, res: Response) => {
-    const { username, password } = req.body;
-    const response = login({ username, password },  qualquer );
-    res.send(response)
+    const UserInfo = req.body;
+    const response = login( UserInfo,  qualquer );
+    console.log(response)
+    res.sendStatus(response)
 });
 
 app.listen(4002, () => {
