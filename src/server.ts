@@ -21,6 +21,7 @@ app.post('/login', loginRequest.handle)
 app.post('/delete', deleteRequest.handle)
 app.post('/update', updateUser.handle)
 
+
 app.listen(4002, () => {
     console.log('Servidor aberto na porta 4002')
 })

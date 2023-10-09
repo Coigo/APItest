@@ -1,11 +1,8 @@
 import { prismaClient } from "../PrismaClient.ts";
 import { Request, Response } from "express";
 
-type userUpdate = {
-    username?:string,
-    password?:string,
-    email?:string,
-}
+type userUpdate = Omit<Request, "id">
+
 
 
 export class UpdateUser {
@@ -13,8 +10,8 @@ export class UpdateUser {
 
         try {
             const { id }  = req.body
-            delete req.body['id'] 
-            const data = req.body
+            const data: userUpdate = req.body
+            
             const result = await prismaClient.users.update({
                 where: {
                   id: id

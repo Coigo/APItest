@@ -2,17 +2,23 @@ import { Request, Response } from 'express'
 import { prismaClient } from '../PrismaClient.ts'
 import { createHash } from 'crypto'
 
+type userData = {
+    username:string,
+    password:string,
+    email:string
+}
 
 export class CreateNewUser {
     async handle (req: Request, res: Response) {
         try {
-            let {username, password} = req.body
+            let {username, password, email}: userData = req.body
             password = createHash('md5').update(password).digest("base64url")
     
             const User = await prismaClient.users.create({
                 data: {
                     username, 
-                    password
+                    password,
+                    email
                 }
             })
             console.log(res)
