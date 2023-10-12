@@ -4,6 +4,7 @@ import { UserCheck } from './Database/controllers/checkUser.ts'
 import { LoginRequest } from './Database/controllers/loginUser.ts'
 import { UpdateUser } from './Database/controllers/updateUser.ts'
 import { DeleteRequest } from './Database/controllers/deleteUser.ts'
+import { MailTO } from './mailer/index.ts'
 
 const app: Express = express()
 
@@ -14,12 +15,14 @@ const checkIfUserExist = new UserCheck()
 const loginRequest = new LoginRequest()
 const deleteRequest = new DeleteRequest()
 const updateUser = new UpdateUser()
+const mail= new MailTO()
 
 app.post('/create', createUser.handle);
 app.post('/check', checkIfUserExist.handle);
 app.post('/login', loginRequest.handle)
 app.post('/delete', deleteRequest.handle)
 app.post('/update', updateUser.handle)
+app.post('/mail', mail.handle)
 
 
 app.listen(4002, () => {

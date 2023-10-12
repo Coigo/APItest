@@ -1,5 +1,5 @@
 import { createTransport } from 'nodemailer';
-
+import { Request, Response} from 'express'
 
 import dotenv from 'dotenv';
 dotenv.config();
@@ -17,10 +17,6 @@ type mailOption = {
     };
   };
 
-if (!process.env.service || !process.env.port || !process.env.user || !process.env.pass) {
-    console.error('Certifique-se de definir as variáveis de ambiente host, port, user e pass.');
-    process.exit(1);
-  }
 
 const transport = createTransport({
     service: process.env.service, 
@@ -36,14 +32,22 @@ const transport = createTransport({
 } as mailOption)  
 
 
-
-async function sendEmail() {
-    const mailSent = await transport.sendMail({
-        text:'deu certo',
-        subject:'deucerto',
-        from:process.env.user,
-        to:"Codigo.TOLMR@gmail.com"
-    })
-    console.log(mailSent)
+export class MailTO {
+   async handle ( req: Request, res: Response ) {
+    const { forwardTo } = req.body
+    console.log(forwardTo)
+    try {
+      const mailSent = await transport.sendMail({
+          text:'www.google.com',
+          subject:'deucerto',
+          from:process.env.user,
+          to: forwardTo
+      })
+      console.log(mailSent)
+    }
+    catch ( err ) {
+      console.log(err)
+      return res.status(400).end()
+    }
+  } 
 }
-sendEmail()
