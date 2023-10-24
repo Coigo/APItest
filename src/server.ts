@@ -1,28 +1,41 @@
 import  express, {Express, Request, Response}  from 'express'
-import { CreateNewUser } from './Database/controllers/createNewUser.ts'
-import { UserCheck } from './Database/controllers/checkUser.ts'
-import { LoginRequest } from './Database/controllers/loginUser.ts'
-import { UpdateUser } from './Database/controllers/updateUser.ts'
-import { DeleteRequest } from './Database/controllers/deleteUser.ts'
-import { MailTO } from './mailer/index.ts'
+
+
+
+import { prismaClient } from '../prisma/PrismaClient.ts'
+import { CreateUser } from './controler/create-user.controler.ts'
 
 const app: Express = express()
-
 app.use(express.json())
 
-const createUser = new CreateNewUser()
-const checkIfUserExist = new UserCheck()
-const loginRequest = new LoginRequest()
-const deleteRequest = new DeleteRequest()
-const updateUser = new UpdateUser()
-const mail= new MailTO()
+const createUser = new CreateUser() 
 
-app.post('/create', createUser.handle);
-app.post('/check', checkIfUserExist.handle);
-app.post('/login', loginRequest.handle)
-app.post('/delete', deleteRequest.handle)
-app.post('/update', updateUser.handle)
-app.post('/mail', mail.handle)
+
+
+app.post('/create', createUser.handle) 
+// const props = req.body
+
+
+// const user = new User(props);
+
+
+
+// const createUserService = new CreateUserService(userRepository);
+
+// createUserService.handle(user);
+
+// // Repositorio  -- Tota regra do bancos.
+// // Services  - Usecase - Regra de negocio
+// // Controller - Valida entrada
+
+
+// user.isValid();
+
+// createUser.handle(user)
+
+// const create = await create_user.create_user()
+
+
 
 
 app.listen(4002, () => {

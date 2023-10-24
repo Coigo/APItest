@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
+import { randomUUID } from 'crypto';
 
 dotenv.config();
 
@@ -20,6 +21,9 @@ if (SECRET === undefined) {
   throw new Error("A variável de ambiente JWT_SECRET não está definida.");
 }
 
+
+
+
 export const token = (user: userToken) => {
   const { id, username } = user
   return jwt.sign({ id , username }, SECRET,  { expiresIn: 10000 })
@@ -31,3 +35,8 @@ export const decode  = (token: string) => {
 };
 
 
+export const passwordToken = async () => {
+  const token = randomUUID()
+
+  return token
+}

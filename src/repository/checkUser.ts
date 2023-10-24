@@ -1,23 +1,21 @@
 import { Request, Response } from 'express'
-import { prismaClient } from '../PrismaClient.ts'
+import { prismaClient } from '../../prisma/PrismaClient.ts'
 import { type } from 'os'
+import { CustomError } from '../costumError.ts'
 
 
 type checkUser = {
-    check:string,
     username?:string,
     email?:string
 }
 
-export class UserCheck {
-    async handle (req: Request, res: Response) {
-        const check: checkUser =  req.body
-        console.log(check)
+export class UserCheck_repository {
+    async check (InfoTOcheck: checkUser, method: string) {
         try {
 
                     const result:any = {
                         "username": async () => {
-                            const { username } = check
+                            const { username } = InfoTOcheck
                             const query = await prismaClient.users.findFirst({
                             where: {
                                 username
@@ -26,7 +24,7 @@ export class UserCheck {
                             return query
                         },
                         "email": async () => {
-                            const { email } = check
+                            const { email } = InfoTOcheck
                             const query =  await prismaClient.users.findFirst({
                             where: {
                                 email
@@ -35,20 +33,19 @@ export class UserCheck {
                             return query
                         }
                     }
-            const Exist = await result[check.check]()
+            const Exist = await result[method]()
 
             if ( Exist ) {
-                return res.status(400).send({checkType: check.check})
+                return {checkType: method, ok: true}
             }
             else {
-                return res.status(200).send({checkType: check.check})
+                return {checkType: method, ok: true}
             }
 
         }
         
         catch ( err ) {
-            console.log('erro')
-            return res.status(500).end()
+            throw new CustomError ('Erro interno', 500)
         }
     }
 }

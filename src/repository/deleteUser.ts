@@ -1,6 +1,6 @@
-import { prismaClient } from "../PrismaClient.ts";
+import { prismaClient } from "../../prisma/PrismaClient.ts";
 import { Request, Response } from "express";
-import { decode } from  '../../modules.ts'
+import { decode } from  '../modules.ts'
 
 
 export class DeleteRequest {

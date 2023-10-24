@@ -1,7 +1,7 @@
-import { prismaClient } from "../PrismaClient.ts";
+import { prismaClient } from "../../prisma/PrismaClient.ts";
 import { Request, Response } from "express";
 import { createHash } from "crypto";
-import { token } from "../../modules.ts";
+import { token } from "../modules.ts";
 
 
 export class LoginRequest {

@@ -1,6 +1,4 @@
-type smtp_type = {
-    host:string
-}
+
 
 export const SMTP_CONFIG = {
     host: "smtp.gmail.com",

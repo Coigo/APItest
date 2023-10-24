@@ -6,7 +6,7 @@
   "main": "server.js",
   "scripts": {
     "start": "node src/server.js",
-    "test": "npm run test",
+    "test": "vitest",
     "dev": "nodemon src/server.js",
     "dev-ts": "nodemon -I --exec node --loader ts-node/esm src/server.ts"
   },
@@ -33,7 +33,6 @@
     "node": "^20.5.0",
     "nodemon": "^3.0.1",
     "prisma-client": "^0.0.0"
-
   },
   "devDependencies": {
     "@types/express": "^4.17.18",
@@ -41,8 +40,10 @@
     "@types/nodemailer": "^6.4.11",
     "nodemailer": "^6.9.5",
     "prisma": "^5.3.1",
+    "ts-node": "^10.9.1",
     "ts-node-dev": "^2.0.0",
     "tsx": "^3.13.0",
-    "typescript": "^5.2.2"
+    "typescript": "^5.2.2",
+    "vitest": "^0.34.6"
   }
 }

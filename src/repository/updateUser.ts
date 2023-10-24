@@ -1,4 +1,4 @@
-import { prismaClient } from "../PrismaClient.ts";
+import { prismaClient } from "../../prisma/PrismaClient.ts";
 import { Request, Response } from "express";
 
 type userUpdate = Omit<Request, "id">

@@ -1,5 +1,9 @@
 import { createTransport } from 'nodemailer';
 import { Request, Response} from 'express'
+import { passwordToken } from '../modules.ts';
+import { savePasswordToken } from '../repository/savePasswordToken.ts';
+
+const saveToken = new savePasswordToken()
 
 import dotenv from 'dotenv';
 dotenv.config();
@@ -34,16 +38,18 @@ const transport = createTransport({
 
 export class MailTO {
    async handle ( req: Request, res: Response ) {
-    const { forwardTo } = req.body
-    console.log(forwardTo)
+    const { email } = req.body
+    console.log(req)
+    console.log(email)
     try {
+      const token = await passwordToken()
       const mailSent = await transport.sendMail({
-          text:'www.google.com',
-          subject:'deucerto',
-          from:process.env.user,
-          to: forwardTo
+        text:`http://localhost:4001/setPassword?token=${token}`,
+        subject:'deucerto',
+        from: process.env.user,
+        to: email
       })
-      console.log(mailSent)
+      await saveToken.handle(token, email)
     }
     catch ( err ) {
       console.log(err)

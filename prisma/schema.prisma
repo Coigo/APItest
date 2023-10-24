@@ -11,17 +11,27 @@ datasource db {
 }
 
 model users {
-  id       Int    @id @default(autoincrement())
-  username String @db.VarChar(30)
-  password String @db.Text
-  email    String @db.Text
+  id            Int          @id @default(autoincrement())
+  username      String       @db.VarChar(30)
+  password      String       @db.Text
+  email         String       @db.Text
+
+  passwordToken changePasswordTokens[]
 
   @@map("users")
 }
 
 model messages {
-  id Int @id @default(autoincrement())
-  message String @db.Text
+  id            Int           @id @default(autoincrement())
+  message       String        @db.Text
 
   @@map("messages")
+}
+
+model changePasswordTokens {
+  token   String     @id
+  user_id Int        @unique
+  user    users      @relation(fields: [user_id], references: [id])
+
+  @@map("changePasswordTokens") 
 }
