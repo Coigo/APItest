@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
-import { randomUUID } from 'crypto';
+import { randomUUID, createHash } from 'crypto';
+
 
 dotenv.config();
 
@@ -39,4 +40,8 @@ export const passwordToken = async () => {
   const token = randomUUID()
 
   return token
+}
+
+export const encryptedPassword = ( password: string ) => {
+  return createHash('md5').update(password).digest("base64url")
 }

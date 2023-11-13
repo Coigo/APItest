@@ -36,7 +36,7 @@ const VariavelJS = {
 type pessoa = keyof typeof VariavelJS
 
 const novapessoa: pessoa = { //isso funciona por algum motivo, mas da erro, funciona de qualquer jeito na vdd
-    noame:'123123',
+    nome:'123123',
     idade:13
 }
 

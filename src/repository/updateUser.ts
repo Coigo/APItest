@@ -1,28 +1,57 @@
 import { prismaClient } from "../../prisma/PrismaClient.ts";
 import { Request, Response } from "express";
-
-type userUpdate = Omit<Request, "id">
-
+import { CustomError } from "../costumError.ts";
 
 
-export class UpdateUser {
-    async handle( req:Request, res:Response ) {
+type updateProps = {
+    token:string
+    password: string
+}
+
+interface Token {
+    user_id: number
+    token: string
+}
+
+
+
+export class UpdateUserPassword_repository {
+    
+    async update ( props: updateProps ) {
+        
+        const { token, password } = props
 
         try {
-            const { id }  = req.body
-            const data: userUpdate = req.body
+
+            return await prismaClient.$transaction(
+                async ( tx ) => {
+                    
+                    const Token = await tx.changePasswordTokens.findFirst({
+                        where: { token }
+                    });
+                    
+                    if ( Token && Token.user_id ) {
+                        const { user_id } = Token
+
+                        const update = await tx.users.update({
+                            where: {id: user_id},
+                            data: { password }
+                        })
+
+                        const deleteToken = await tx.changePasswordTokens.delete({
+                            where: { token }
+                        })
+
+                        return true
+                    }
+                    throw new Error("Erro ao mudar a senha de usuário");
+                }
+            )
+        }
+        catch ( err ) {
+            throw new Error("Erro ao mudar a senha de usuário");
             
-            const result = await prismaClient.users.update({
-                where: {
-                  id: id
-                },
-                data
-                
-            })
-            return res.status(200).end()
-        } catch ( err ) {
-            console.log(err)
-            return res.status(500).end()
-        } 
-    } 
+        }
+    }
+
 }

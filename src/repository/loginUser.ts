@@ -2,29 +2,29 @@ import { prismaClient } from "../../prisma/PrismaClient.ts";
 import { Request, Response } from "express";
 import { createHash } from "crypto";
 import { token } from "../modules.ts";
+import { CustomError } from "../costumError.ts";
 
+type userProps = {
+    username: string
+    password: string
+}
 
-export class LoginRequest {
-    async handle(req:Request, res:Response) {
-        let { username, password } = req.body
-        password = createHash('md5').update(password).digest('base64url')
+export class Login_repository {
+    async login( props: userProps ) {
+        const { username, password } = props
         try {
-            const result = await prismaClient.users.findFirst({
+            const login = await prismaClient.users.findFirst({
                 where: {
                     username, password
                 }
             })
-            if ( !result ) return res.status(401).end()
-            else if ( result ) {
-        
-                res.status(200)
-                return res.send(token(result))
-        } 
-            
+            if ( login ) {
+                return token( login )
+            }
+            return null
         }
         catch ( err ) {
-            console.log(err)
-            return res.status(500).end()
+            throw new CustomError("Erro ao fazer login", 500)
         }
     }
 }

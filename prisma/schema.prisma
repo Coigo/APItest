@@ -30,7 +30,7 @@ model messages {
 
 model changePasswordTokens {
   token   String     @id
-  user_id Int        @unique
+  user_id Int        
   user    users      @relation(fields: [user_id], references: [id])
 
   @@map("changePasswordTokens") 

@@ -1,6 +1,5 @@
-import { prismaClient } from "../../prisma/PrismaClient.ts"
 import { CustomError } from "../costumError.ts"
-import { CreateNewUser_repository } from "../repository/createNewUser.ts"
+import { encryptedPassword } from "../modules.ts"
 
 
 export interface userProps {
@@ -26,7 +25,8 @@ export class CreateUser_service {
     async create_user() {
         try {
             
-            const {username, password, email } = this.props
+            let {username, password, email } = this.props
+            password = encryptedPassword(password)
             const create = await (this.repository.create ? this.repository.create({ username, password, email }) : this.createUser_mock)
             console.log(create)
             return true
@@ -42,7 +42,6 @@ export class CreateUser_service {
 
     private get createUser_mock  () {
         try {
-            console.log('caiu no teste')
             const username = this.props.username 
             const password = this.props.email 
             const email = this.props.password 

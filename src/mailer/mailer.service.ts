@@ -1,11 +1,9 @@
 import { createTransport } from 'nodemailer';
-import { Request, Response} from 'express'
 import { passwordToken } from '../modules.ts';
-import { savePasswordToken } from '../repository/savePasswordToken.ts';
 
-const saveToken = new savePasswordToken()
 
 import dotenv from 'dotenv';
+import { CustomError } from '../costumError.ts';
 dotenv.config();
 
 type mailOption = {
@@ -21,10 +19,14 @@ type mailOption = {
     };
   };
 
+  type mailType = {
+    email: string
+    token: string
+  }
 
 const transport = createTransport({
     service: process.env.service, 
-    port: Number(process.env.port),
+    port: Number (process.env.port),
     secure: false,
     auth: {
         user: process.env.user,
@@ -36,11 +38,16 @@ const transport = createTransport({
 } as mailOption)  
 
 
-export class MailTO {
-   async handle ( req: Request, res: Response ) {
-    const { email } = req.body
-    console.log(req)
-    console.log(email)
+export class Mail_Service {
+
+
+  private props: mailType
+
+
+   async mail () {
+    const email = this.props.email
+    const token = this.props.token
+
     try {
       const token = await passwordToken()
       const mailSent = await transport.sendMail({
@@ -49,11 +56,23 @@ export class MailTO {
         from: process.env.user,
         to: email
       })
-      await saveToken.handle(token, email)
+
     }
     catch ( err ) {
       console.log(err)
-      return res.status(400).end()
+      throw new Error('Erro ao mandar o email')
     }
   } 
+
+
+  constructor ( props: mailType ) {
+    
+    if ( !props.email && ! props.token ) {
+      throw new CustomError('Email ou token não informados', 400)
+    }
+
+    this.props = props
+
+  }
+
 }

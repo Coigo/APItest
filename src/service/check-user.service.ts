@@ -4,28 +4,29 @@ import { threadId } from "worker_threads"
 
 
 export type userInformation = {
-    username?: string
-    email?: string
+    prop:string
+    method:string
 }
 
 export interface checkUser_repository {
-    check? ( info: userInformation, method: string ): Promise<boolean> | {}
+    check? ( property: userInformation): Promise<boolean> | {}
 }
 
 // _________________________________________________________________________________________________________________________________________
 
 export class UserCheck {
 
-    private info: userInformation
-    private method: string
+    private property: userInformation
     private repository: checkUser_repository
 
 
-    async check () {
+    async check_user () {
+
+
         try {
-            console.log('check')
-            const checkOK = await (this.repository.check ? this.repository.check({ username: this.info as string}, 'username') : this.checkUser_mock )
-            return checkOK
+            const check = await (this.repository.check ? this.repository.check( this.property ) : this.checkUser_mock )
+            console.log(check)
+            return check
 
         }
         catch ( err ) {
@@ -36,23 +37,23 @@ export class UserCheck {
 // _________________________________________________________________________________________________________________________________________
 
     get checkUser_mock () {
-        console.log('mock')
         const fakeDatabase = [{ id: 1, username: 'Fulano', email:'email@teste.com' }]
 
         try {
+            const method = this.property.method
             const fakeSearch = {
                         'username': () => {
-                        return fakeDatabase.find(user => user['username'] === this.info.username)
+                        return fakeDatabase.find(user => user['username'] === this.property.prop)
                         },
                         'email': () => {
-                        return fakeDatabase.find(user => user['email'] === this.info.email);
+                        return fakeDatabase.find(user => user['email'] === this.property.prop);
                         }
                     }
-            const result = fakeSearch[ this.method as 'username' | 'email']()
+            const result = fakeSearch[ this.property.method as 'username' | 'email']()
             if ( !result ) {
-                return true //disponivel
+                 return {method: method, free: true}
             }
-            return false
+             return {method: method, free: false}
 
         }
         catch ( err ) {
@@ -64,25 +65,26 @@ export class UserCheck {
 
 // _________________________________________________________________________________________________________________________________________
     get userinfo () {
-        return this.info
+        return this.property
     }
     get currentMethod () {
-        return this.method
+        return this.property.method
     }
 
 // _________________________________________________________________________________________________________________________________________
 
-    constructor ( info: userInformation, method: string, repository: checkUser_repository = {} ) {
-
-        if (method !== "email" && method !== "username") {
+    constructor ( property: userInformation, repository: checkUser_repository = {} ) {
+        console.log(property)
+        if (!(property.method === "email" || property.method === "username")) {
             throw new CustomError ('O metodo de verificação deve ser apenas para "email" ou "username"', 500)
         }
-        if ( !info || !info.email && !info.username) {
+        if ( !property.prop ) {
+            console.log('err');
+            
             throw new CustomError ( 'As credenciais para verificação devem ser atribuídas', 400 ) 
         } 
-        
-        this.info = info
-        this.method = method
+        console.log(property)
+        this.property = property
         this.repository = repository
 
     }

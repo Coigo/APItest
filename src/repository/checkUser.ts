@@ -1,33 +1,34 @@
-import { Request, Response } from 'express'
 import { prismaClient } from '../../prisma/PrismaClient.ts'
-import { type } from 'os'
 import { CustomError } from '../costumError.ts'
 
 
-type checkUser = {
-    username?:string,
-    email?:string
+type checkProps = {
+    prop:string
+    method:string
 }
 
+
 export class UserCheck_repository {
-    async check (InfoTOcheck: checkUser, method: string) {
+
+    async check (props:checkProps) {
+        console.log('Chegou no repositorio')
         try {
+
+            const { prop, method } = props
 
                     const result:any = {
                         "username": async () => {
-                            const { username } = InfoTOcheck
                             const query = await prismaClient.users.findFirst({
                             where: {
-                                username
+                                username: prop
                                 }
                             })
                             return query
                         },
                         "email": async () => {
-                            const { email } = InfoTOcheck
                             const query =  await prismaClient.users.findFirst({
                             where: {
-                                email
+                                email: prop
                                 }
                             })
                             return query
@@ -36,12 +37,13 @@ export class UserCheck_repository {
             const Exist = await result[method]()
 
             if ( Exist ) {
-                return {checkType: method, ok: true}
+                console.log('existe')
+                return {checkType: method, free: false}
             }
             else {
-                return {checkType: method, ok: true}
+                console.log('não existe')
+                return {checkType: method, free: true}
             }
-
         }
         
         catch ( err ) {
