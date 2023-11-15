@@ -1,5 +1,6 @@
+
 import { CustomError } from "../costumError.ts"
-import { encryptedPassword, token } from "../modules.ts"
+import { encryptedPassword, token, decode } from "../modules.ts"
 import { Login_repository } from "../repository/loginUser.ts"
 
 type user_props = {
@@ -29,7 +30,9 @@ export class LoginUser_service {
             const login = await ( this.repository.login? this.repository.login({ username, password }) : this.login_mock )
 
             if ( login ) {
+                console.log(login)
                 const JWTtoken = token( login as loginResult )
+                console.log(decode(JWTtoken))
                 return JWTtoken 
             }
             else 

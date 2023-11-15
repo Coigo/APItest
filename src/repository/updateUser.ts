@@ -32,7 +32,8 @@ export class UpdateUserPassword_repository {
                     
                     if ( Token && Token.user_id ) {
                         const { user_id } = Token
-
+                        console.log(user_id);
+                        
                         const update = await tx.users.update({
                             where: {id: user_id},
                             data: { password }
@@ -44,13 +45,12 @@ export class UpdateUserPassword_repository {
 
                         return true
                     }
-                    throw new Error("Erro ao mudar a senha de usuário");
+                    throw false
                 }
             )
         }
         catch ( err ) {
-            throw new Error("Erro ao mudar a senha de usuário");
-            
+            throw new CustomError ('Não foi possível atualizar a senha do usuário', 400)
         }
     }
 

@@ -49,7 +49,7 @@ export class Mail_Service {
     const token = this.props.token
 
     try {
-      const token = await passwordToken()
+
       const mailSent = await transport.sendMail({
         text:`http://localhost:4001/setPassword?token=${token}`,
         subject:'deucerto',

@@ -8,6 +8,7 @@ export class updateUser_controler  {
         
         try {
             const props =  req.body
+            console.log(props)
             
             const userUpdate = await new UpdateUser(props, (new UpdateUserPassword_repository))
             const update = await userUpdate.update()
@@ -15,6 +16,7 @@ export class updateUser_controler  {
             return res.status(400).end()
     }
         catch ( err ) {
+            console.log(err)
             return res.status(400).end()
         }
     }

@@ -19,7 +19,7 @@ export class Login_repository {
                 }
             })
             if ( login ) {
-                return token( login )
+                return login 
             }
             return null
         }
